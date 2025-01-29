@@ -1,1 +1,2 @@
-# 014_2025_Sphingomonas_sediminicola
+# *Sphingomonas sediminicola* DSM 18106<sup>T</sup> does not form nodules on *Pisum sativum* (pea)
+
