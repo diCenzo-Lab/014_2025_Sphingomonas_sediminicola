@@ -1,0 +1,1 @@
+DSM18106	DSM18106.fastq.gz
