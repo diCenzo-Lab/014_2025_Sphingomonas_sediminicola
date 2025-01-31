@@ -91,6 +91,8 @@ echo 'MIVLSLSRREIEALISTVQSGLALPKEPTQSLILELALEPLIARLESQLRTFVQILRVGVAITPAPYDEFIRSI
 mv sym_proteins.fasta 7_sym_protein_analysis/ # Create query file with Nod protein sequences
 blastp -query 7_sym_protein_analysis/sym_proteins.fasta -subject 6_PGAP_annotations/Sphingomonas_sediminicola_DSM18106/Sphingomonas_sediminicola_DSM_18106.faa > 7_sym_protein_analysis/blast_results.full.txt # Run BLASTp to search for the Nod proteins
 blastp -query 7_sym_protein_analysis/sym_proteins.fasta -subject 6_PGAP_annotations/Sphingomonas_sediminicola_DSM18106/Sphingomonas_sediminicola_DSM_18106.faa -outfmt '6 qseqid sseqid pident length mismatch gapopen qlen qstart qend slen sstart send bitscore evalue sstrand' > 7_sym_protein_analysis/blast_results.table.txt # Run BLASTp to search for the Nod proteins
-
-
-
+cut -f2 7_sym_protein_analysis/blast_results.table.txt > 7_sym_protein_analysis/hit_list.txt # Get list of hits
+pullseq -i 6_PGAP_annotations/Sphingomonas_sediminicola_DSM18106/Sphingomonas_sediminicola_DSM_18106.faa -n 7_sym_protein_analysis/hit_list.txt | tr '\n' '\t' | tr '>' '\n>' > 7_sym_protein_analysis/hit_sequences.txt # Get the sequences of the hits
+sed -i 's/\t/___/' 7_sym_protein_analysis/hit_sequences.txt # Fix formatting of file
+sed -i 's/\t//g' 7_sym_protein_analysis/hit_sequences.txt # Fix formatting of file
+sed -i 's/___/\t/g' 7_sym_protein_analysis/hit_sequences.txt # Fix formatting of file

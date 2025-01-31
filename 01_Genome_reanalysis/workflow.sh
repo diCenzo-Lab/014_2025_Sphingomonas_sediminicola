@@ -96,6 +96,13 @@ echo 'MGEPALFQPAAKLSHEVVSWLNETAAPRTVLQSRIGDKPLSIRMSRLVWQAEPYATSVLDCVFCAEGETAVLSL
 echo '>Sphingomonas_SctQ' >> sym_proteins.fasta # Create query file with Nod and Nif protein sequences
 echo 'MIVLSLSRREIEALISTVQSGLALPKEPTQSLILELALEPLIARLESQLRTFVQILRVGVAITPAPYDEFIRSIGPVSGKVRLFLFSPLDGRVPSAFRALDELLGQLGNLPSKINSKLPITTIMEIGFLSAFESLLRNARTGDALLPRVSPFGRGQISLSAGDTWTAANLCGDHLVLRPPFSKLSAHLENAHMTSVPEEQQAESLKNRISQAKLSMIAELGESYISVSEFLGLNVGDVISLAKPVHSGLKIKVGDRLKFIGSPGTVKDRVAVQIDEIVSEGAEELDE' >> sym_proteins.fasta # Create query file with Nod and Nif protein sequences
 mv sym_proteins.fasta 06_sym_protein_analysis/ # Create query file with Nod and Nif protein sequences
-cat 05_pgap_annotation/*/annot.faa > 06_sym_protein_analysis/combined_proteomes.fasta # Combine the proteomes into a single file
+cat 05_pgap_annotation/SRR18460303/annot.faa | sed 's/>/>SRR18460303_/' > 06_sym_protein_analysis/combined_proteomes.fasta # Combine the proteomes into a single file
+cat 05_pgap_annotation/SRR18460304/annot.faa | sed 's/>/>SRR18460304_/' >> 06_sym_protein_analysis/combined_proteomes.fasta # Combine the proteomes into a single file
+cat 05_pgap_annotation/SRR18460306/annot.faa | sed 's/>/>SRR18460306_/' >> 06_sym_protein_analysis/combined_proteomes.fasta # Combine the proteomes into a single file
 blastp -query 06_sym_protein_analysis/sym_proteins.fasta -subject 06_sym_protein_analysis/combined_proteomes.fasta > 06_sym_protein_analysis/blast_results.full.txt # Run BLASTp to search for the Nod and Nif proteins
 blastp -query 06_sym_protein_analysis/sym_proteins.fasta -subject 06_sym_protein_analysis/combined_proteomes.fasta -outfmt '6 qseqid sseqid pident length mismatch gapopen qlen qstart qend slen sstart send bitscore evalue sstrand' > 06_sym_protein_analysis/blast_results.table.txt # Run BLASTp to search for the Nod and Nif proteins
+cut -f2 06_sym_protein_analysis/blast_results.table.txt > 06_sym_protein_analysis/hit_list.txt # Get list of hits
+pullseq -i 06_sym_protein_analysis/combined_proteomes.fasta -n 06_sym_protein_analysis/hit_list.txt | tr '\n' '\t' | tr '>' '\n>' > 06_sym_protein_analysis/hit_sequences.txt # Get the sequences of the hits
+sed -i 's/\t/___/' 06_sym_protein_analysis/hit_sequences.txt # Fix formatting of file
+sed -i 's/\t//g' 06_sym_protein_analysis/hit_sequences.txt # Fix formatting of file
+sed -i 's/___/\t/g' 06_sym_protein_analysis/hit_sequences.txt # Fix formatting of file
