@@ -96,3 +96,22 @@ pullseq -i 6_PGAP_annotations/Sphingomonas_sediminicola_DSM18106/Sphingomonas_se
 sed -i 's/\t/___/' 7_sym_protein_analysis/hit_sequences.txt # Fix formatting of file
 sed -i 's/\t//g' 7_sym_protein_analysis/hit_sequences.txt # Fix formatting of file
 sed -i 's/___/\t/g' 7_sym_protein_analysis/hit_sequences.txt # Fix formatting of file
+
+# ANI calculations
+mkdir 8_ANI/ # Create folder to hold the data
+mkdir 8_ANI/genomes/ # Create folder to hold the input genomes
+cp 6_PGAP_annotations/Sphingomonas_sediminicola_DSM18106/Sphingomonas_sediminicola_DSM_18106.fna.gz 8_ANI/genomes/ONT_assembly.fna.gz # Copy the genomes
+cp ../01_Genome_reanalysis/05_pgap_annotation/SRR18460303/annot.fna.gz 8_ANI/genomes/SRR18460303_assembly.fna.gz # Copy the genomes
+cp ../01_Genome_reanalysis/05_pgap_annotation/SRR18460304/annot.fna.gz 8_ANI/genomes/SRR18460304_assembly.fna.gz # Copy the genomes
+cp ../01_Genome_reanalysis/05_pgap_annotation/SRR18460306/annot.fna.gz 8_ANI/genomes/SRR18460306_assembly.fna.gz # Copy the genomes
+gunzip 8_ANI/genomes/* # Unzip the files
+find 8_ANI/genomes/*.fna > 8_ANI/filePaths.txt # Get file paths for the four genoems
+fastANI --ql 8_ANI/filePaths.txt --rl 8_ANI/filePaths.txt -o 8_ANI/fastani.output.txt -t 8 # Run FastANI to calculate ANI 
+
+# Megaplasmid comparison
+mkdir 9_megaplasmid_comparison/ # Create folder to hold the data
+# manually prepared a file called megaplasmid.fna within 9_BLASTn that has all the supposed megaplasmid genes, formatted as a tab-delimited file with the gene name in the first column and the nucleotide sequence in the second column
+sed -i 's/CDS />CDS_/' 9_megaplasmid_comparison/megaplasmid.fna # Fix formatting of this file to make it a fasta file
+sed -i 's/\t/\n/' 9_megaplasmid_comparison/megaplasmid.fna # Fix formatting of this file to make it a fasta file
+gunzip 6_PGAP_annotations/Sphingomonas_sediminicola_DSM18106/Sphingomonas_sediminicola_DSM_18106.fna # Unzip file
+blastn -query 9_megaplasmid_comparison/megaplasmid.fna -subject 6_PGAP_annotations/Sphingomonas_sediminicola_DSM18106/Sphingomonas_sediminicola_DSM_18106.fna -outfmt '6 qseqid sseqid pident length mismatch gapopen qlen qstart qend slen sstart send bitscore evalue sstrand' -max_target_seqs 1 -max_hsps 1 > 9_megaplasmid_comparison/ONT.output.txt # Run BLASTn

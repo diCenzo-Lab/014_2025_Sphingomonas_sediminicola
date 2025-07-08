@@ -106,3 +106,15 @@ pullseq -i 06_sym_protein_analysis/combined_proteomes.fasta -n 06_sym_protein_an
 sed -i 's/\t/___/' 06_sym_protein_analysis/hit_sequences.txt # Fix formatting of file
 sed -i 's/\t//g' 06_sym_protein_analysis/hit_sequences.txt # Fix formatting of file
 sed -i 's/___/\t/g' 06_sym_protein_analysis/hit_sequences.txt # Fix formatting of file
+
+# Megaplasmid comparison
+mkdir 07_megaplasmid_comparison/ # Make folder to hold the data
+spades.py -1 02_cleaned_reads/combined_1.trimmed.fastq.gz -2 02_cleaned_reads/combined_2.trimmed.fastq.gz -o 07_megaplasmid_comparison/spades -t 8 # Create an additional assembly with SPAdes
+# manually prepared a file called megaplasmid.fna within 07_megaplasmid_comparison that has all the supposed megaplasmid genes, formatted as a tab-delimited file with the gene name in the first column and the nucleotide sequence in the second column
+sed -i 's/CDS />CDS_/' 07_megaplasmid_comparison/megaplasmid.fna # Fix formatting of this file to make it a fasta file
+sed -i 's/\t/\n/' 07_megaplasmid_comparison/megaplasmid.fna # Fix formatting of this file to make it a fasta file
+gunzip 05_pgap_annotation/SRR18460303/annot.fna # Unzip file
+blastn -query 07_megaplasmid_comparison/megaplasmid.fna -subject 05_pgap_annotation/SRR18460303/annot.fna -outfmt '6 qseqid sseqid pident length mismatch gapopen qlen qstart qend slen sstart send bitscore evalue sstrand' -max_target_seqs 1 -max_hsps 1 > 07_megaplasmid_comparison/SRR18460303.table.txt # Run BLASTn to also check the combined assembly from the Illumina data
+gunzip 05_pgap_annotation/combined/annot.fna # Unzip file
+blastn -query 07_megaplasmid_comparison/megaplasmid.fna -subject 05_pgap_annotation/combined/annot.fna -outfmt '6 qseqid sseqid pident length mismatch gapopen qlen qstart qend slen sstart send bitscore evalue sstrand' -max_target_seqs 1 -max_hsps 1 > 07_megaplasmid_comparison/combined.table.txt # Run BLASTn to also check the combined assembly from the Illumina data
+blastn -query 07_megaplasmid_comparison/megaplasmid.fna -subject 07_megaplasmid_comparison/spades/scaffolds.fasta -outfmt '6 qseqid sseqid pident length mismatch gapopen qlen qstart qend slen sstart send bitscore evalue sstrand' -max_target_seqs 1 -max_hsps 1 > 07_megaplasmid_comparison/spades.table.txt # Run BLASTn to also check the combined assembly from the Illumina data
