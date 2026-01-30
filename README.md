@@ -1,5 +1,7 @@
 # Re-evaluation of the nodulation capacity of *Sphingomonas sediminicola* DSM 18106<sup>T</sup> indicates that this strain is not capable of inducing root nodule formation on *Pisum sativum* (pea)
 
+diCenzo GC, Gutmanis SM, Esme O, Moulin L. 2025. **Re-evaluation of the nodulation capacity of *Sphingomonas sediminicola* DSM 18106<sup>T</sup> indicates that this strain is not capable of inducing root nodule formation on *Pisum sativum* (pea)**. *Canadian Journal of Microbiology*. 71: 1-9.
+
 This repository contains the scripts and input files required to repeat the analyses reported in the associated article.
 
 ## 01_Genome_reanalysis
